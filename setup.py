@@ -30,7 +30,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "PyQt6>=6.6.1",
-        "watchdog>=4.0.0",
     ],
     entry_points={
         "console_scripts": [
