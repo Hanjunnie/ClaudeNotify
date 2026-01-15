@@ -21,6 +21,7 @@ wheels/
 *.egg
 
 # Virtual Environment
+.venv/
 venv/
 env/
 ENV/
@@ -38,3 +39,4 @@ Thumbs.db
 
 # Logs
 *.log
+.github/copilot-instructions.md

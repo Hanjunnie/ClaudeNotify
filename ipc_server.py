@@ -1,14 +1,22 @@
 """
-IPC 서버 - Hook 스크립트로부터 알림을 수신
+REST API 서버 - Hook 스크립트로부터 알림을 수신
 """
-import json
-import socket
 import threading
+import uvicorn
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from typing import Callable, Optional
 
 
-class IPCServer:
-    """Hook 스크립트와 통신하는 소켓 서버"""
+class NotificationRequest(BaseModel):
+    """알림 요청 모델"""
+    title: str = "Claude Code"
+    message: str
+    type: str = "info"
+
+
+class APIServer:
+    """FastAPI 기반 알림 서버"""
 
     DEFAULT_PORT = 19876
 
@@ -20,74 +28,52 @@ class IPCServer:
         """
         self.callback = callback
         self.port = port
-        self.server_socket: Optional[socket.socket] = None
-        self.running = False
+        self.app = FastAPI(title="Claude Notifier API")
+        self.server: Optional[uvicorn.Server] = None
         self.thread: Optional[threading.Thread] = None
 
+        self._setup_routes()
+
+    def _setup_routes(self):
+        """API 라우트 설정"""
+        @self.app.get("/health")
+        async def health_check():
+            return {"status": "ok"}
+
+        @self.app.post("/notify")
+        async def notify(request: NotificationRequest):
+            """알림 전송"""
+            if not request.message:
+                raise HTTPException(status_code=400, detail="message is required")
+
+            self.callback(request.title, request.message, request.type)
+            return {"status": "sent", "message": request.message}
+
     def start(self):
-        """서버 시작"""
-        if self.running:
-            return
+        """서버 시작 (백그라운드 스레드)"""
+        config = uvicorn.Config(
+            self.app,
+            host="0.0.0.0",
+            port=self.port,
+            log_level="warning"
+        )
+        self.server = uvicorn.Server(config)
 
-        try:
-            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.server_socket.bind(("127.0.0.1", self.port))
-            self.server_socket.listen(5)
-            self.server_socket.settimeout(1.0)  # accept 타임아웃
-            self.running = True
+        self.thread = threading.Thread(target=self.server.run, daemon=True)
+        self.thread.start()
 
-            self.thread = threading.Thread(target=self._listen_loop, daemon=True)
-            self.thread.start()
-
-            print(f"IPC 서버 시작됨 (포트: {self.port})")
-        except OSError as e:
-            print(f"IPC 서버 시작 실패: {e}")
-            self.running = False
-
-    def _listen_loop(self):
-        """클라이언트 연결 수신 루프"""
-        while self.running:
-            try:
-                client_socket, addr = self.server_socket.accept()
-                threading.Thread(
-                    target=self._handle_client,
-                    args=(client_socket,),
-                    daemon=True
-                ).start()
-            except socket.timeout:
-                continue
-            except OSError:
-                break
-
-    def _handle_client(self, client_socket: socket.socket):
-        """클라이언트 요청 처리"""
-        try:
-            data = client_socket.recv(4096)
-            if data:
-                try:
-                    payload = json.loads(data.decode("utf-8"))
-                    title = payload.get("title", "Claude Code")
-                    message = payload.get("message", "")
-                    notification_type = payload.get("type", "info")
-
-                    if message:
-                        self.callback(title, message, notification_type)
-                except json.JSONDecodeError:
-                    pass
-        except Exception as e:
-            print(f"클라이언트 처리 오류: {e}")
-        finally:
-            client_socket.close()
+        print(f"REST API 서버 시작됨 (포트: {self.port})")
+        print(f"  - Health: http://localhost:{self.port}/health")
+        print(f"  - Notify: POST http://localhost:{self.port}/notify")
 
     def stop(self):
         """서버 중지"""
-        self.running = False
-        if self.server_socket:
-            try:
-                self.server_socket.close()
-            except OSError:
-                pass
+        if self.server:
+            self.server.should_exit = True
         if self.thread:
             self.thread.join(timeout=2)
-        print("IPC 서버 중지됨")
+        print("REST API 서버 중지됨")
+
+
+# 하위 호환성을 위한 별칭
+IPCServer = APIServer

@@ -3,5 +3,29 @@
     "allow": [
       "Bash(chmod:*)"
     ]
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"{{HOOKS_PATH}}/notify_hook.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"{{HOOKS_PATH}}/stop_hook.py\""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -14,7 +14,7 @@ from run_guard import RunGuard
 
 class NotificationBridge(QObject):
     """IPC 서버와 트레이 앱 사이의 브릿지 (스레드 간 통신)"""
-    notification_signal = pyqtSignal(str)
+    notification_signal = pyqtSignal(str ,str)
 
 
 def parse_arguments():
@@ -56,7 +56,7 @@ def main() -> int:
     def on_notification(title: str, message: str, notification_type: str):
         """알림 수신 콜백"""
         display_message = f"[{title}] {message}"
-        bridge.notification_signal.emit(display_message)
+        bridge.notification_signal.emit(display_message,notification_type)
 
     ipc_server = IPCServer(callback=on_notification, port=args.port)
 

@@ -4,7 +4,7 @@
 import sys
 from PyQt6.QtWidgets import QSystemTrayIcon, QMenu, QApplication
 from PyQt6.QtGui import QIcon, QAction, QPainter, QColor
-from PyQt6.QtCore import QObject, pyqtSignal, QSize
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 from PyQt6.QtGui import QPixmap
 from notification_window import NotificationWindow
 
@@ -12,13 +12,15 @@ from notification_window import NotificationWindow
 class TrayApp(QObject):
     """시스템 트레이 애플리케이션"""
 
-    notification_requested = pyqtSignal(str)
+    notification_requested = pyqtSignal(str, str)
 
     def __init__(self):
         super().__init__()
         self.app = QApplication.instance()
         if not self.app:
             self.app = QApplication(sys.argv)
+
+        self._active_notifications = []  # 활성 알림 창 참조 유지
 
         self.setup_tray_icon()
         self.setup_menu()
@@ -46,7 +48,7 @@ class TrayApp(QObject):
         font.setPointSize(32)
         font.setBold(True)
         painter.setFont(font)
-        painter.drawText(pixmap.rect(), 0x84, "C")  # AlignCenter
+        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, "C")
 
         painter.end()
 
@@ -89,18 +91,23 @@ class TrayApp(QObject):
         if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
             self.show_about()
 
-    def show_notification(self, message: str):
+    def show_notification(self,message: str ,type ="" ):
         """알림 표시"""
-        notification = NotificationWindow(message)
-        notification.show_notification()
-
         # 트레이 아이콘에도 메시지 표시
+        icon = self.get_messageicon(type)
         self.tray_icon.showMessage(
             "Claude Code",
             message,
-            QSystemTrayIcon.MessageIcon.Information,
-            3000
+            icon,
+            1000
         )
+
+    def get_messageicon(self ,type:str) ->QSystemTrayIcon.MessageIcon:
+            icon = QSystemTrayIcon.MessageIcon.Information
+            if(type == "permission" or type == "input"):
+                icon = QSystemTrayIcon.MessageIcon.Warning
+
+            return icon
 
     def test_notification(self):
         """테스트 알림"""

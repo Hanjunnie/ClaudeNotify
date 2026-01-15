@@ -30,6 +30,8 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "PyQt6>=6.6.1",
+        "fastapi>=0.109.0",
+        "uvicorn>=0.27.0",
     ],
     entry_points={
         "console_scripts": [

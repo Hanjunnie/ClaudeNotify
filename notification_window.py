@@ -87,14 +87,13 @@ class NotificationWindow(QWidget):
 
         # 좌측 하단 위치 계산
         margin = 20
-        start_x = margin
-        end_x = margin
+        x_pos = margin
         y_pos = screen.height() - self.height() - margin
 
         # 시작 위치 (화면 밖 왼쪽)
         self.start_pos = QRect(-self.width(), y_pos, self.width(), self.height())
         # 종료 위치 (화면 안 좌측 하단)
-        self.end_pos = QRect(end_x, y_pos, self.width(), self.height())
+        self.end_pos = QRect(x_pos, y_pos, self.width(), self.height())
 
         # 슬라이드 인 애니메이션
         self.slide_in_animation = QPropertyAnimation(self, b"geometry")
