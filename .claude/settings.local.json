@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(tasklist.exe:*)"
     ]
   },
   "hooks": {
@@ -11,7 +12,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"{{HOOKS_PATH}}/notify_hook.py\""
+            "command": "python3 \"./src/hooks/notify_hook.py\""
           }
         ]
       }
@@ -22,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"{{HOOKS_PATH}}/stop_hook.py\""
+            "command": "python3 \"./src/hooks/stop_hook.py\""
           }
         ]
       }

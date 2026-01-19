@@ -46,7 +46,7 @@ class APIServer:
             if not request.message:
                 raise HTTPException(status_code=400, detail="message is required")
 
-            self.callback(request.title, request.message, request.type)
+            self.callback(request.title, request.message, reques^t.type)
             return {"status": "sent", "message": request.message}
 
     def start(self):
@@ -62,9 +62,9 @@ class APIServer:
         self.thread = threading.Thread(target=self.server.run, daemon=True)
         self.thread.start()
 
-        print(f"REST API 서버 시작됨 (포트: {self.port})")
-        print(f"  - Health: http://localhost:{self.port}/health")
-        print(f"  - Notify: POST http://localhost:{self.port}/notify")
+        print(f"REST API 서버 시작됨 (포트: {self.port})") 
+#        print(f"  - Health: http://localhost:{self.port}/health")
+#        print(f"  - Notify: POST http://localhost:{self.port}/notify")
 
     def stop(self):
         """서버 중지"""

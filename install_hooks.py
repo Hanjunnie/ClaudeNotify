@@ -13,7 +13,7 @@ from pathlib import Path
 
 def get_hooks_path():
     """Hook 스크립트 경로 반환"""
-    return Path(__file__).parent / "hooks"
+    return Path(__file__).parent / "src" / "hooks"
 
 
 def get_claude_settings_path(scope: str) -> Path:
@@ -104,7 +104,7 @@ def install_hooks(scope: str, force: bool = False):
     print("  - Stop: 작업 완료 이벤트")
     print("\n[다음 단계]")
     print("1. Claude Code Notifier 트레이 앱 실행:")
-    print("   python main.py")
+    print("   python src/main.py")
     print("\n2. Claude Code 사용 시 자동으로 알림이 표시됩니다.")
     return True
 
