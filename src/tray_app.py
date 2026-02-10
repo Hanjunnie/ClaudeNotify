@@ -99,7 +99,7 @@ class TrayApp(QObject):
             "Claude Code",
             message,
             icon,
-            1000
+            5000  # 5초로 변경
         )
 
     def get_messageicon(self ,type:str) ->QSystemTrayIcon.MessageIcon:
@@ -111,7 +111,7 @@ class TrayApp(QObject):
 
     def test_notification(self):
         """테스트 알림"""
-        self.show_notification("작업이 완료되었습니다!")
+        self.show_notification("작업이 완료되었습니다!", "info")
 
     def show_about(self):
         """정보 표시"""

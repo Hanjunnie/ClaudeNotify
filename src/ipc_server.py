@@ -46,7 +46,7 @@ class APIServer:
             if not request.message:
                 raise HTTPException(status_code=400, detail="message is required")
 
-            self.callback(request.title, request.message, reques^t.type)
+            self.callback(request.title, request.message, request.type)
             return {"status": "sent", "message": request.message}
 
     def start(self):

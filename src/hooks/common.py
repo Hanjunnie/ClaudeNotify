@@ -44,7 +44,7 @@ def send_notification(title: str, message: str, notification_type: str = "info")
             headers={"Content-Type": "application/json"},
             method="POST"
         )
-        with urllib.request.urlopen(req, timeout=5) as response:
+        with urllib.request.urlopen(req, timeout=1) as response:
             return response.status == 200
     except (urllib.error.URLError, urllib.error.HTTPError):
         return False

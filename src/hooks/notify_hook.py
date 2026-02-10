@@ -18,7 +18,7 @@ def main():
     message = input_data.get("message", "")
 
     if notification_type == "idle_prompt":
-        send_notification(title="Claude Code 대기 중", message="입력을 기다리고 있습니다",n otification_type="idle")
+        send_notification(title="Claude Code 대기 중", message="입력을 기다리고 있습니다", notification_type="idle")
     elif notification_type == "permission_prompt":
         send_notification(title="권한 요청",message=message or "Claude Code가 권한을 요청합니다", notification_type="permission")
     elif notification_type == "elicitation_dialog":

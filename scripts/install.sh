@@ -150,7 +150,7 @@ pip install -r requirements.txt
 # Verify installation
 echo ""
 echo -e "${BLUE}[4/4]${NC} Verifying installation..."
-python -c "import PyQt6; print(f'     PyQt6 {PyQt6.QtCore.PYQT_VERSION_STR} installed')"
+python -c "from PyQt6.QtCore import PYQT_VERSION_STR; print(f'     PyQt6 {PYQT_VERSION_STR} installed')"
 python -c "import watchdog; print('     watchdog installed')"
 
 chmod +x scripts/run.sh
